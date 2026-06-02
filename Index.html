@@ -1,141 +1,327 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⚡ SYSTEM WARNING ⚡</title>
+    <title>🔥 लोडिंग... कृपया प्रतीक्षा करें 🔥</title>
     <style>
-        body {
-            background-color: black;
-            color: #00ff00;
-            font-family: 'Courier New', Courier, monospace;
-            padding: 20px;
+        * {
             margin: 0;
-            overflow: hidden;
+            padding: 0;
+            box-sizing: border-box;
             user-select: none;
         }
-        #terminal {
-            width: 100%;
-            height: 100vh;
+
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            font-family: 'Segoe UI', 'Poppins', sans-serif;
+            min-height: 100vh;
             display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
         }
-        .line {
-            margin-bottom: 8px;
-            font-size: 14px;
-            font-weight: bold;
-            white-space: nowrap;
+
+        /* नॉर्मल कंटेंट */
+        .normal-content {
+            text-align: center;
+            color: white;
+            z-index: 10;
+            padding: 30px;
+            animation: fadeIn 0.5s ease;
         }
-        .danger {
-            color: #ff3333;
+
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(255,255,255,0.2);
+            border-top: 5px solid #ff6b6b;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
         }
-        .warning {
-            color: #ffcc00;
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
-        /* Prank Pop-up Style */
-        #prank-overlay {
-            display: none;
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin: 20px 0;
+            color: #ffd93d;
+        }
+
+        p {
+            font-size: 1.1rem;
+            color: #ccc;
+            margin: 15px 0;
+        }
+
+        .progress-bar {
+            width: 300px;
+            height: 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 30px;
+            margin: 20px auto;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #ffd93d);
+            border-radius: 30px;
+            transition: width 0.3s ease;
+        }
+
+        .status-text {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-top: 10px;
+        }
+
+        /* 😈 जंपस्केयर ओवरले - छुपा हुआ */
+        .jumpscare {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            color: white;
+            background: black;
+            z-index: 9999;
+            display: none;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
-            text-align: center;
-            z-index: 9999;
+            animation: shake 0.2s infinite;
         }
-        h1 {
-            font-size: 50px;
-            color: #ff3333;
-            margin: 0;
-            animation: blink 1s infinite;
+
+        @keyframes shake {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(-5px, -5px); }
+            75% { transform: translate(5px, 5px); }
         }
-        h2 {
-            font-size: 24px;
-            color: #00ff00;
+
+        .jumpscare img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            animation: glitch 0.3s infinite;
         }
-        @keyframes blink {
+
+        @keyframes glitch {
             0% { opacity: 1; }
-            50% { opacity: 0; }
+            50% { opacity: 0.8; filter: hue-rotate(90deg); }
             100% { opacity: 1; }
+        }
+
+        .close-btn {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10000;
+            font-family: monospace;
+            box-shadow: 0 0 20px red;
+            animation: pulse 0.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.1); }
+            100% { transform: translateX(-50%) scale(1); }
+        }
+
+        .close-btn:hover {
+            background: #c0392b;
         }
     </style>
 </head>
 <body>
 
-    <div id="terminal"></div>
-
-    <!-- End of the Prank Screen -->
-    <div id="prank-overlay" id="popup">
-        <h1>⚠️ SYSTEM OVERRIDE ⚠️</h1>
-        <br>
-        <h2>Bhai... Tera Phone Hack Nahi Hua! 😂</h2>
-        <p style="font-size: 18px; color: #aaa;">Kaisa laga mazaak? - LGND ALIYA</p>
+    <!-- 😇 नॉर्मल दिखने वाला कंटेंट -->
+    <div class="normal-content" id="normalContent">
+        <div class="loader"></div>
+        <h2>⏳ सिस्टम स्कैन हो रहा है...</h2>
+        <p>🔍 कृपया प्रतीक्षा करें, 100% होने वाला है</p>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="status-text" id="statusText">0% - सिस्टम चेक...</div>
+        <p style="font-size: 0.8rem; margin-top: 30px;">✨ इंटरनेट स्पीड: 2.4 MB/s | 📡 सर्वर: कनेक्टेड</p>
     </div>
 
+    <!-- 👹 जंपस्केयर ओवरले -->
+    <div class="jumpscare" id="jumpscare">
+        <!-- SVG डरावना चेहरा (कोई इमेज लिंक नहीं चाहिए) -->
+        <svg viewBox="0 0 500 500" style="width: 100%; height: 100%; background: #000;">
+            <rect width="500" height="500" fill="#1a0000"/>
+            <!-- आँखें -->
+            <circle cx="150" cy="200" r="60" fill="#ff0000"/>
+            <circle cx="350" cy="200" r="60" fill="#ff0000"/>
+            <circle cx="150" cy="200" r="30" fill="#000"/>
+            <circle cx="350" cy="200" r="30" fill="#000"/>
+            <!-- खूनी आँसू -->
+            <rect x="130" y="250" width="40" height="80" fill="#8b0000" rx="10"/>
+            <rect x="330" y="250" width="40" height="80" fill="#8b0000" rx="10"/>
+            <!-- मुँह -->
+            <ellipse cx="250" cy="350" rx="100" ry="60" fill="#4a0000"/>
+            <ellipse cx="250" cy="340" rx="80" ry="40" fill="#ff0000"/>
+            <!-- दांत -->
+            <rect x="210" y="320" width="20" height="30" fill="white"/>
+            <rect x="240" y="320" width="20" height="30" fill="white"/>
+            <rect x="270" y="320" width="20" height="30" fill="white"/>
+            <!-- सिर पर चाकू -->
+            <polygon points="220,40 230,100 270,100 280,40" fill="#888"/>
+            <rect x="235" y="80" width="30" height="10" fill="#555"/>
+            <!-- टेक्स्ट -->
+            <text x="250" y="470" font-size="30" fill="red" text-anchor="middle" font-weight="bold" font-family="monospace">
+                TU HAI! 🔪
+            </text>
+        </svg>
+        <button class="close-btn" id="closeBtn" onclick="closeJumpscare()">😰 बचाओ मुझे! 😰</button>
+    </div>
+
+    <!-- 🔊 ऑडियो एलिमेंट (छुपा हुआ) -->
+    <audio id="screamAudio" preload="auto">
+        <source src="https://www.myinstants.com/media/sounds/bloody-mary-sound-effect.mp3" type="audio/mpeg">
+    </audio>
+
     <script>
-        const terminal = document.getElementById('terminal');
-        const overlay = document.getElementById('prank-overlay');
+        let progress = 0;
+        let interval;
+        let screamPlayed = false;
 
-        const logs = [
-            "[!] CRITICAL: UNAUTHORIZED ACCESS ATTEMPT...",
-            "[*] INJECTING TROJAN.EXPLOIT.STAGED...",
-            "[*] CONNECTING TO REMOTE SERVER...",
-            "[+] CONNECTION ESTABLISHED: OVERLORD_MAIN",
-            "[*] BYPASSING SYSTEM FIREWALL... [10%]",
-            "[*] BYPASSING SYSTEM FIREWALL... [47%]",
-            "[*] BYPASSING SYSTEM FIREWALL... [100%]",
-            "[✔] FIREWALL BROKEN.",
-            "[-] ACCESSING INTERNAL STORAGE...",
-            "[-] FETCHING WHATSAPP CHATS...",
-            "[-] COPYING CONTACTS LIST...",
-            "[-] DOWNLOADING PRIVATE PHOTOS...",
-            "[!] WARNING: DELETING SYSTEM32/ANDROID_CORE...",
-            "[!] SYSTEM CRITICAL ERROR: MEMORY OVERFLOW...",
-            "[-] ERASING INTERNAL STORAGE data.db... [20%]",
-            "[-] ERASING INTERNAL STORAGE data.db... [55%]",
-            "[-] ERASING INTERNAL STORAGE data.db... [99%]",
-            "[☠] DEVICE TAKEOVER COMPLETE."
-        ];
-
-        let index = 0;
-
-        function printLog() {
-            if (index < logs.length) {
-                const div = document.createElement('div');
-                div.className = 'line';
-                
-                // Add colors based on content
-                if (logs[index].includes('!')) {
-                    div.classList.add('danger');
-                } else if (logs[index].includes('✔')) {
-                    div.classList.add('warning');
+        // प्रोग्रेस बार अपडेट करो (5 सेकंड में 100%)
+        function startProgress() {
+            interval = setInterval(() => {
+                progress += Math.floor(Math.random() * 10) + 5;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    triggerJumpscare();
                 }
-
-                div.innerText = logs[index];
-                terminal.appendChild(div);
                 
-                // Auto scroll to bottom
-                window.scrollTo(0, document.body.scrollHeight);
-                index++;
+                // प्रोग्रेस बार अपडेट
+                document.getElementById('progressFill').style.width = progress + '%';
                 
-                // Random typing speed simulation
-                setTimeout(printLog, Math.random() * 400 + 200);
-            } else {
-                // Show the prank screen after 1.5 seconds of completion
-                setTimeout(() => {
-                    overlay.style.display = 'flex';
-                }, 1500);
-            }
+                // स्टेटस टेक्स्ट बदलो (मज़ेदार)
+                const statuses = [
+                    '🔍 सिस्टम स्कैनिंग... ' + progress + '%',
+                    '📁 वायरस चेक हो रहे हैं... ' + progress + '%',
+                    '🕵️ आपकी फोटो देखी जा रही है... ' + progress + '%',
+                    '📍 आपकी लोकेशन ट्रैक हो रही है... ' + progress + '%',
+                    '💀 कुछ अजीब मिला... ' + progress + '%',
+                    '👻 पीछे मुड़कर देखो... ' + progress + '%'
+                ];
+                const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+                document.getElementById('statusText').innerText = randomStatus;
+                
+            }, 150);
         }
 
-        // Start the fake hacking animation
-        setTimeout(printLog, 1000);
+        // 😈 जंपस्केयर ट्रिगर करो
+        function triggerJumpscare() {
+            // स्क्रीन फ्लिकर
+            for(let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    document.body.style.backgroundColor = i % 2 === 0 ? 'red' : 'black';
+                }, i * 50);
+            }
+            
+            setTimeout(() => {
+                document.body.style.backgroundColor = '';
+                // जंपस्केयर दिखाओ
+                document.getElementById('jumpscare').style.display = 'flex';
+                document.getElementById('normalContent').style.opacity = '0';
+                
+                // चीख बजाओ
+                const audio = document.getElementById('screamAudio');
+                audio.volume = 0.7;
+                audio.play().catch(e => console.log('Audio play failed:', e));
+                
+                // वाइब्रेशन (मोबाइल पर)
+                if(navigator.vibrate) {
+                    navigator.vibrate([500, 300, 500]);
+                }
+                
+                // विंडो हिलाओ
+                let shakeInterval = setInterval(() => {
+                    if(document.getElementById('jumpscare').style.display !== 'flex') {
+                        clearInterval(shakeInterval);
+                        return;
+                    }
+                    const x = Math.random() * 10 - 5;
+                    const y = Math.random() * 10 - 5;
+                    window.scrollTo(x, y);
+                }, 50);
+                
+                setTimeout(() => {
+                    clearInterval(shakeInterval);
+                    window.scrollTo(0, 0);
+                }, 3000);
+                
+            }, 150);
+        }
+
+        // 😅 जंपस्केयर बंद करो
+        function closeJumpscare() {
+            document.getElementById('jumpscare').style.display = 'none';
+            document.getElementById('normalContent').style.opacity = '1';
+            
+            // फन मैसेज दिखाओ
+            const normalDiv = document.getElementById('normalContent');
+            normalDiv.innerHTML = `
+                <div style="text-align: center;">
+                    <div style="font-size: 4rem;">😂😂😂</div>
+                    <h2 style="color: #ffd93d;">बच गया तू! 😅</h2>
+                    <p style="font-size: 1.2rem; margin: 20px;">तुझे लगा सच में कुछ हो गया? मस्ती थी भाई! 🎉</p>
+                    <p style="color: #ff6b6b;">💀 रात को सोते वक्त याद आएगा 💀</p>
+                    <button onclick="location.reload()" style="margin-top: 30px; background: #ff4757; color: white; border: none; padding: 12px 30px; border-radius: 50px; font-size: 1rem; cursor: pointer;">
+                        🔄 दोबारा खेलो (किसी और को दिखाने के लिए)
+                    </button>
+                </div>
+            `;
+        }
+
+        // पेज लोड होते ही शुरू करो
+        startProgress();
+        
+        // कंसोल में छुपा मैसेज
+        console.log("%c⚠️ तू डर गया ना? 😂", "color: red; font-size: 20px; font-weight: bold;");
+        
+        // एस्केप प्रेस करने पर भी ना बंद हो
+        document.addEventListener('keydown', function(e) {
+            if(e.key === 'Escape') {
+                e.preventDefault();
+                // फन मैसेज
+                const msg = document.createElement('div');
+                msg.innerText = '🚫 ESC बंद नहीं कर सकता 😈';
+                msg.style.position = 'fixed';
+                msg.style.bottom = '20px';
+                msg.style.right = '20px';
+                msg.style.background = 'black';
+                msg.style.color = 'red';
+                msg.style.padding = '10px';
+                msg.style.borderRadius = '10px';
+                msg.style.zIndex = '10001';
+                document.body.appendChild(msg);
+                setTimeout(() => msg.remove(), 2000);
+            }
+        });
     </script>
 </body>
 </html>
