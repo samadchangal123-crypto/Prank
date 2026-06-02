@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>🔥 SYSTEM COMPROMISED 🔥</title>
+    <title>🔥 SYSTEM LOCKED 🔥</title>
     <style>
         * {
             margin: 0;
@@ -19,11 +19,11 @@
             height: 100vh;
             width: 100vw;
             position: fixed;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', system-ui, sans-serif;
         }
 
-        /* Video Container Full Screen */
-        .video-container {
+        /* Image Container */
+        .image-container {
             position: fixed;
             top: 0;
             left: 0;
@@ -31,18 +31,31 @@
             height: 100%;
             z-index: 9999;
             background: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
         }
 
-        iframe {
+        .zoom-image {
             width: 100%;
             height: 100%;
-            border: none;
-            position: absolute;
-            top: 0;
-            left: 0;
+            object-fit: cover;
+            animation: slowZoom 10s ease-in-out forwards;
+            transform-origin: center center;
         }
 
-        /* Fake UI Overlay (Buttons but they do NOTHING until video ends) */
+        /* Slow zoom effect */
+        @keyframes slowZoom {
+            0% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1.6);
+            }
+        }
+
+        /* Fake UI Overlay (Buttons do NOTHING for 10 sec) */
         .fake-ui {
             position: fixed;
             bottom: 30px;
@@ -62,19 +75,34 @@
             border-radius: 50px;
             font-size: 1rem;
             font-weight: bold;
-            letter-spacing: 1px;
             pointer-events: auto;
             cursor: pointer;
-            transition: 0.1s linear;
             backdrop-filter: blur(5px);
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
 
         .fake-ui button:active {
             transform: scale(0.97);
         }
 
-        /* Hidden Message After Video Ends */
+        /* Toast Message */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: black;
+            color: red;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            z-index: 10001;
+            white-space: nowrap;
+            border: 1px solid red;
+            display: none;
+            font-family: monospace;
+        }
+
+        /* End Message (After 10 sec) */
         .end-message {
             position: fixed;
             top: 0;
@@ -88,14 +116,12 @@
             align-items: center;
             flex-direction: column;
             text-align: center;
-            font-family: monospace;
         }
 
         .end-message h1 {
             color: #ff3333;
             font-size: 2.5rem;
             margin-bottom: 20px;
-            text-shadow: 0 0 10px red;
         }
 
         .end-message p {
@@ -114,43 +140,18 @@
             border-radius: 50px;
             cursor: pointer;
             font-weight: bold;
-            transition: 0.2s;
         }
 
         .end-message button:hover {
             background: #c0392b;
-            transform: scale(1.05);
-        }
-
-        /* Small toast message */
-        .toast {
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: black;
-            color: red;
-            padding: 8px 16px;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            z-index: 10001;
-            white-space: nowrap;
-            border: 1px solid red;
-            display: none;
-            font-family: monospace;
         }
     </style>
 </head>
 <body>
 
-<div class="video-container" id="videoContainer">
-    <!-- YouTube Shorts Embed - No controls, no escape -->
-    <iframe id="prankVideo" 
-        src="https://www.youtube.com/embed/8eR6Izvkc04?autoplay=1&mute=0&controls=0&disablekb=1&modestbranding=1&showinfo=0&rel=0&loop=0&playsinline=1"
-        frameborder="0" 
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowfullscreen>
-    </iframe>
+<div class="image-container" id="imageContainer">
+    <!-- 🔥 TERI IMAGE (ImgBB wali) -->
+    <img class="zoom-image" id="scaryImage" src="https://i.ibb.co/ZpZf8qdr/fa7b459655d73815cddafad86a4c91b5.jpg" alt="Scary Image">
 </div>
 
 <div class="fake-ui">
@@ -159,165 +160,136 @@
     <button id="fakeExit">🚪 EXIT (FAKE)</button>
 </div>
 
+<div id="toastMsg" class="toast">⛔ 10 सेकंड रुको! ⛔</div>
+
 <div id="endMessage" class="end-message">
-    <h1>😂 BACH GAYA? 😂</h1>
-    <p>Video khatam hui... ab tu free hai!</p>
-    <p>💀 <span id="scareCount">Kitni baar dar gaya?</span> 💀</p>
+    <h1>😂 DAR GAYA? 😂</h1>
+    <p>10 सेकंड खत्म! अब तू आज़ाद है 🎉</p>
     <button id="realCloseBtn">😎 DUBAARA KHELO 😎</button>
 </div>
 
-<div id="toastMsg" class="toast">⛔ VIDEO KHATAM KARO TABHI HOGEGA ⛔</div>
-
 <script>
-    // ------------------- LOCK EVERYTHING -------------------
-    let videoEnded = false;
+    // ---------- PRANK ENGINE ----------
+    let locked = true;
     const fakeBtns = document.querySelectorAll('.fake-ui button');
     const toast = document.getElementById('toastMsg');
-    const iframe = document.getElementById('prankVideo');
-    
-    // 1. DISABLE ALL KEYBOARD SHORTCUTS (Escape, F5, Ctrl+R, Back, Alt+F4, etc.)
+
+    // 1. 🔇 CHIINKHNE WALI VOICE CLIP (10 sec)
+    const screamAudio = new Audio('https://www.myinstants.com/media/sounds/woman-screaming-sound-effect.mp3');
+    screamAudio.volume = 0.9;
+    screamAudio.loop = false;
+
+    // Play scream immediately
+    screamAudio.play().catch(e => console.log("Audio error:", e));
+
+    // 2. 🔒 BLOCK ALL KEYS (Escape, F5, Ctrl+R, Back, etc.)
     function blockAllKeys(e) {
-        // Block Escape, F5, F11, F12, Backspace, Arrow keys, Ctrl, Alt, Tab combinations
-        const blocked = [
-            'Escape', 'F5', 'F11', 'F12', 'Backspace', 'Alt', 'Control', 'Meta', 
-            'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Tab', 'AltGraph'
-        ];
+        const blocked = ['Escape', 'F5', 'F11', 'F12', 'Backspace', 'Alt', 'Control', 'Meta', 
+                         'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Tab'];
         if (blocked.includes(e.key) || e.keyCode === 116 || e.keyCode === 8 || e.keyCode === 27) {
             e.preventDefault();
             e.stopPropagation();
             return false;
         }
-        // Block Ctrl+R, Ctrl+W, Ctrl+T, Ctrl+N, Ctrl+Shift+T, etc.
         if (e.ctrlKey || e.altKey || e.metaKey) {
             e.preventDefault();
             return false;
         }
-        // Block F1 to F12
         if (e.keyCode >= 112 && e.keyCode <= 123) {
             e.preventDefault();
             return false;
         }
     }
-    
     window.addEventListener('keydown', blockAllKeys);
     window.addEventListener('keyup', blockAllKeys);
-    
-    // 2. BLOCK RIGHT CLICK
+
+    // 3. BLOCK RIGHT CLICK
     document.addEventListener('contextmenu', (e) => e.preventDefault());
-    
-    // 3. BLOCK TOUCH SWIPE (mobile back/forward)
+
+    // 4. BLOCK TOUCH SWIPE (mobile)
     let touchStart = 0;
     document.addEventListener('touchstart', (e) => {
         touchStart = e.touches[0].clientX;
-        if (!videoEnded) e.preventDefault();
+        if (locked) e.preventDefault();
     }, {passive: false});
     document.addEventListener('touchmove', (e) => {
-        if (!videoEnded) {
+        if (locked) {
             const diff = e.touches[0].clientX - touchStart;
             if (Math.abs(diff) > 30) e.preventDefault();
         }
     }, {passive: false});
-    
-    // 4. BLOCK HISTORY BACK/FORWARD
+
+    // 5. BLOCK HISTORY BACK
     history.pushState(null, null, location.href);
     window.addEventListener('popstate', function () {
         history.pushState(null, null, location.href);
     });
-    
-    // 5. FAKE BUTTONS - DO NOTHING UNTIL VIDEO ENDS
+
+    // 6. FAKE BUTTONS - SIRF TOAST DIKHAYENGE
     fakeBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            if (!videoEnded) {
-                // Vibrate if mobile
+            if (locked) {
                 if (navigator.vibrate) navigator.vibrate(100);
-                // Show toast message
                 toast.style.display = 'block';
-                setTimeout(() => {
-                    toast.style.display = 'none';
-                }, 1200);
-                // Optional: Flash red screen for 0.1 sec
+                setTimeout(() => toast.style.display = 'none', 1200);
+                // Thoda red flash
                 document.body.style.backgroundColor = 'red';
                 setTimeout(() => document.body.style.backgroundColor = 'black', 100);
             }
             return false;
         });
     });
-    
-    // 6. DETECT WHEN VIDEO ENDS (YouTube iframe trick - check every second)
-    let checkInterval = setInterval(() => {
-        // We can't directly get video end from cross-origin iframe, so we use a timeout
-        // Typical YouTube Shorts length ~ 15-30 seconds. We'll set timer of 25 seconds.
-        // But better: wait for manual detection via user? Nah, we'll just set fixed time
-        // Actually, we'll assume video length = 20 seconds for this Short.
-        // But to be accurate, let's do a "timeout" and also let user "click" fake button many times.
-    }, 1000);
-    
-    // Since YouTube iframe API is heavy, easiest: Fixed video length from Short
-    // This Short is approx 20 seconds. We'll lock for 22 seconds.
-    let videoDuration = 22000; // 22 seconds
-    
+
+    // 7. ⏱️ EXACTLY 10 SECOND LOCK
     setTimeout(() => {
-        if (!videoEnded) {
-            videoEnded = true;
-            unlockAndShowMessage();
+        if (locked) {
+            locked = false;
+            
+            // Stop scream audio
+            screamAudio.pause();
+            screamAudio.currentTime = 0;
+            
+            // Remove key locks
+            window.removeEventListener('keydown', blockAllKeys);
+            window.removeEventListener('keyup', blockAllKeys);
+            
+            // Hide fake buttons
+            document.querySelector('.fake-ui').style.display = 'none';
+            
+            // Show end message
+            document.getElementById('endMessage').style.display = 'flex';
+            
+            // Real close button
+            document.getElementById('realCloseBtn').onclick = () => {
+                window.location.reload();
+            };
+            
+            // Slowly hide image container
+            const imgCont = document.getElementById('imageContainer');
+            imgCont.style.transition = 'opacity 0.5s';
+            imgCont.style.opacity = '0';
+            setTimeout(() => imgCont.style.display = 'none', 500);
         }
-    }, videoDuration);
-    
-    // Backup: if video ends earlier? We'll also listen for any user interaction? Not possible.
-    // But user will be stuck for 22 sec at least.
-    
-    function unlockAndShowMessage() {
-        if (videoEnded) return;
-        videoEnded = true;
-        
-        // Remove all key locks
-        window.removeEventListener('keydown', blockAllKeys);
-        window.removeEventListener('keyup', blockAllKeys);
-        document.removeEventListener('contextmenu', (e) => e.preventDefault());
-        
-        // Hide fake UI
-        document.querySelector('.fake-ui').style.display = 'none';
-        
-        // Show end message
-        const msgDiv = document.getElementById('endMessage');
-        msgDiv.style.display = 'flex';
-        
-        // Scare counter (fun)
-        let scares = Math.floor(Math.random() * 10) + 5;
-        document.getElementById('scareCount').innerHTML = `😱 Tu lagbhag ${scares} baar dar gaya! 😱`;
-        
-        // Real close button
-        document.getElementById('realCloseBtn').onclick = () => {
-            window.location.reload();
-        };
-        
-        // Hide video container after 1 sec
-        setTimeout(() => {
-            document.getElementById('videoContainer').style.opacity = '0';
-        }, 500);
-    }
-    
-    // Extra: Fullscreen attempt on first touch/click
+    }, 10000); // 10 second exact
+
+    // 8. FULLSCREEN ON FIRST CLICK
     function forceFullscreen() {
         const docEl = document.documentElement;
-        if (docEl.requestFullscreen) {
-            docEl.requestFullscreen().catch(() => {});
-        } else if (docEl.webkitRequestFullscreen) {
-            docEl.webkitRequestFullscreen();
-        }
+        if (docEl.requestFullscreen) docEl.requestFullscreen().catch(() => {});
+        else if (docEl.webkitRequestFullscreen) docEl.webkitRequestFullscreen();
     }
     document.body.addEventListener('click', function oneClick() {
         forceFullscreen();
         document.body.removeEventListener('click', oneClick);
     });
-    
-    // Disable zoom via meta already added, also disable pinch zoom
+
+    // Disable pinch zoom
     document.addEventListener('gesturestart', (e) => e.preventDefault());
-    
-    console.log("%c🔥 PRANK ACTIVE - NO ESCAPE FOR 22 SECONDS 🔥", "color: red; font-size: 18px; font-weight: bold");
-    console.log("%c⚠️ Video end hone tak koi button kaam nahi karega ⚠️", "color: orange; font-size: 14px");
+
+    console.log("%c🔥 PRANK ACTIVE - IMAGE ZOOM + SCREAM FOR 10 SEC 🔥", "color: red; font-size: 18px");
+    console.log("%c⛔ Koi button kaam nahi karega ⛔", "color: orange; font-size: 14px");
 </script>
 </body>
 </html>
