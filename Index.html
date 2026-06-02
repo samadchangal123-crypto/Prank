@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ SYSTEM WARNING ⚡</title>
+    <style>
+        body {
+            background-color: black;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 20px;
+            margin: 0;
+            overflow: hidden;
+            user-select: none;
+        }
+        #terminal {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        .line {
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        .danger {
+            color: #ff3333;
+        }
+        .warning {
+            color: #ffcc00;
+        }
+        /* Prank Pop-up Style */
+        #prank-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            color: white;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            z-index: 9999;
+        }
+        h1 {
+            font-size: 50px;
+            color: #ff3333;
+            margin: 0;
+            animation: blink 1s infinite;
+        }
+        h2 {
+            font-size: 24px;
+            color: #00ff00;
+        }
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="terminal"></div>
+
+    <!-- End of the Prank Screen -->
+    <div id="prank-overlay" id="popup">
+        <h1>⚠️ SYSTEM OVERRIDE ⚠️</h1>
+        <br>
+        <h2>Bhai... Tera Phone Hack Nahi Hua! 😂</h2>
+        <p style="font-size: 18px; color: #aaa;">Kaisa laga mazaak? - LGND ALIYA</p>
+    </div>
+
+    <script>
+        const terminal = document.getElementById('terminal');
+        const overlay = document.getElementById('prank-overlay');
+
+        const logs = [
+            "[!] CRITICAL: UNAUTHORIZED ACCESS ATTEMPT...",
+            "[*] INJECTING TROJAN.EXPLOIT.STAGED...",
+            "[*] CONNECTING TO REMOTE SERVER...",
+            "[+] CONNECTION ESTABLISHED: OVERLORD_MAIN",
+            "[*] BYPASSING SYSTEM FIREWALL... [10%]",
+            "[*] BYPASSING SYSTEM FIREWALL... [47%]",
+            "[*] BYPASSING SYSTEM FIREWALL... [100%]",
+            "[✔] FIREWALL BROKEN.",
+            "[-] ACCESSING INTERNAL STORAGE...",
+            "[-] FETCHING WHATSAPP CHATS...",
+            "[-] COPYING CONTACTS LIST...",
+            "[-] DOWNLOADING PRIVATE PHOTOS...",
+            "[!] WARNING: DELETING SYSTEM32/ANDROID_CORE...",
+            "[!] SYSTEM CRITICAL ERROR: MEMORY OVERFLOW...",
+            "[-] ERASING INTERNAL STORAGE data.db... [20%]",
+            "[-] ERASING INTERNAL STORAGE data.db... [55%]",
+            "[-] ERASING INTERNAL STORAGE data.db... [99%]",
+            "[☠] DEVICE TAKEOVER COMPLETE."
+        ];
+
+        let index = 0;
+
+        function printLog() {
+            if (index < logs.length) {
+                const div = document.createElement('div');
+                div.className = 'line';
+                
+                // Add colors based on content
+                if (logs[index].includes('!')) {
+                    div.classList.add('danger');
+                } else if (logs[index].includes('✔')) {
+                    div.classList.add('warning');
+                }
+
+                div.innerText = logs[index];
+                terminal.appendChild(div);
+                
+                // Auto scroll to bottom
+                window.scrollTo(0, document.body.scrollHeight);
+                index++;
+                
+                // Random typing speed simulation
+                setTimeout(printLog, Math.random() * 400 + 200);
+            } else {
+                // Show the prank screen after 1.5 seconds of completion
+                setTimeout(() => {
+                    overlay.style.display = 'flex';
+                }, 1500);
+            }
+        }
+
+        // Start the fake hacking animation
+        setTimeout(printLog, 1000);
+    </script>
+</body>
+</html>
